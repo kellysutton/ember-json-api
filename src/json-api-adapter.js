@@ -32,8 +32,10 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
         url.push(route.replace(param, ''));
       }
 
-      if (prefix) { url.unshift(prefix); }
-
+      // Make sure the current URL doesn't already begin with our prefix.
+      if (prefix && url[0].indexOf(prefix) !== 0) {
+        url.unshift(prefix);
+      }
       url = url.join('/');
       if (!host && url) { url = '/' + url; }
 
