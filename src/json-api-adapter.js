@@ -74,7 +74,7 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
    */
   updateRecord: function(store, type, record) {
     var data = {};
-    data[this.pathForType(type.typeKey)] = store.serializerFor(type.typeKey).serialize(record, {includeId: true});
+    data[this.pathForType(type.typeKey)] = get(record, '_inFlightAttributes');
 
     var id = get(record, 'id');
 
