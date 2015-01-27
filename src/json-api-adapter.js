@@ -11,41 +11,6 @@ DS._routes = Ember.create(null);
 DS.JsonApiAdapter = DS.RESTAdapter.extend({
   defaultSerializer: 'DS/jsonApi',
   /**
-   * Look up routes based on top-level links.
-   */
-  buildURL: function(typeName, id) {
-    // TODO: this basically only works in the simplest of scenarios
-    var route = DS._routes[typeName];
-    if (!!route) {
-      var url = [];
-      var host = get(this, 'host');
-      var prefix = this.urlPrefix();
-      var param = /\{(.*?)\}/g;
-
-      if (id) {
-        if (param.test(route)) {
-          url.push(route.replace(param, id));
-        } else {
-          url.push(route, id);
-        }
-      } else {
-        url.push(route.replace(param, ''));
-      }
-
-      // Make sure the current URL doesn't already begin with our prefix.
-      if (prefix && url[0].indexOf(prefix) !== 0) {
-        url.unshift(prefix);
-      }
-      url = url.join('/');
-      if (!host && url) { url = '/' + url; }
-
-      return url;
-    }
-
-    return this._super(typeName, id);
-  },
-
-  /**
    * Fix query URL.
    */
   findMany: function(store, type, ids, owner) {
