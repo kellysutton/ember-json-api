@@ -23,10 +23,39 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
    */
   createRecord: function(store, type, record) {
     var data = {};
+    var pluralResource = this.pathForType(type.typeKey)
 
-    data[this.pathForType(type.typeKey)] = store.serializerFor(type.typeKey).serialize(record, {
+    data[pluralResource] = store.serializerFor(type.typeKey).serialize(record, {
       includeId: true
     });
+
+    Ember.A(Ember.keys(data[pluralResource])).forEach(function(key) {
+      // In the specific case that our serializer has bubbled up a null value, we
+      // want to prune that from the outgoing request.
+      if (data[pluralResource][key] === null) {
+        delete data[pluralResource][key];
+      }
+    });
+
+    // If we have a links section, we need to sanitize each piece of that as well.
+    if (!!data[pluralResource].links) {
+      Ember.A(Ember.keys(data[pluralResource].links)).forEach(function(key) {
+        if (!data[pluralResource].links[key]) {
+          delete data[pluralResource].links[key];
+          return;
+        }
+
+        if (data[pluralResource].links[key].length === 0) {
+          delete data[pluralResource].links[key];
+          return;
+        }
+      });
+    }
+
+    // If our links section is totally empty, remove it.
+    if (Ember.A(Ember.keys(data[pluralResource].links)).length === 0) {
+      delete data[pluralResource].links;
+    }
 
     return this.ajax(this.buildURL(type.typeKey), 'POST', {
       data: data
