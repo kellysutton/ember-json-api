@@ -53,7 +53,7 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
     }
 
     // If our links section is totally empty, remove it.
-    if (Ember.A(Ember.keys(data[pluralResource].links)).length === 0) {
+    if (data[pluralResource].links && Ember.A(Ember.keys(data[pluralResource].links)).length === 0) {
       delete data[pluralResource].links;
     }
 
