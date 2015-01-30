@@ -39,14 +39,22 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
 
     // If we have a links section, we need to sanitize each piece of that as well.
     if (!!data[pluralResource].links) {
-      Ember.A(Ember.keys(data[pluralResource].links)).forEach(function(key) {
-        if (!data[pluralResource].links[key]) {
-          delete data[pluralResource].links[key];
+      Ember.A(Ember.keys(data[pluralResource].links)).forEach(function(linkKey) {
+        // Weird relationship typing, kill it
+        if (data[pluralResource].links[linkKey] && data[pluralResource].links[linkKey].ids && data[pluralResource].links[linkKey].ids.length === 0) {
+          delete data[pluralResource].links[linkKey];
           return;
         }
 
-        if (data[pluralResource].links[key].length === 0) {
-          delete data[pluralResource].links[key];
+        // link is set to null
+        if (!data[pluralResource].links[linkKey]) {
+          delete data[pluralResource].links[linkKey];
+          return;
+        }
+
+        // link array is empty
+        if (data[pluralResource].links[linkKey].length === 0) {
+          delete data[pluralResource].links[linkKey];
           return;
         }
       });
