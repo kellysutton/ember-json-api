@@ -79,7 +79,6 @@ DS.JsonApiAdapter = DS.RESTAdapter.extend({
     data[this.pathForType(type.typeKey)] = get(record, '_inFlightAttributes');
 
     var id = get(record, 'id');
-    data[this.pathForType(type.typeKey)].id = id;
 
     return this.ajax(this.buildURL(type.typeKey, id), 'PUT', {
       data: data
